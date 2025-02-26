@@ -10,7 +10,7 @@ public class Line : IComparable<Line>
         Point1 = point1;
         Point2 = point2;
     }
-    public double Distance
+    public float Distance
     {
         get
         {

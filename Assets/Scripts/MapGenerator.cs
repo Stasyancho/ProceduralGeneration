@@ -22,7 +22,9 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private Transform pathsParent; 
     [SerializeField] private int castlesCount;
     [SerializeField] private GameObject castlePrefab;
+    [SerializeField] private float minimalAngleForTriangle;
     
+    [Header("Result")]
     public List<Hexagon> hexList;
 
     private int iteration = 0;
@@ -50,7 +52,7 @@ public class MapGenerator : MonoBehaviour
             Destroy(pathsParent.transform.GetChild(x).gameObject);
         List<FutureHexagonParameters> map = MapDeveloper.Develop(gridWidth, gridHeight, hexSize, prefabs.Count, castlesCount);
         hexList = HexGridSystem.GenerateGrid(map, gridParent, prefabs, castlePrefab);
-        List<Line> lines = RoadsDeveloper.Develop(map.Where(x => x.isCastle).ToList());
+        List<Line> lines = RoadsDeveloper.Develop(map.Where(x => x.isCastle).ToList(), minimalAngleForTriangle);
         RoadsDrawer.DrawRoads(pathsParent, lines);
     }
 }

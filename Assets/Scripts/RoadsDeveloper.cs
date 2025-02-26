@@ -6,12 +6,12 @@ using UnityEngine;
 
 public static class RoadsDeveloper 
 {
-    public static List<Line> Develop(List<FutureHexagonParameters> points)
+    public static List<Line> Develop(List<FutureHexagonParameters> points, float angle)
     {
         List<Line> lines = CreateLines(points).ToList();
-        return FilterLines(lines);
+        return FilterLinesByDelone(FilterLinesByAngle(lines, points, angle)); 
+        //return FilterLinesByDelone(lines);
     }
-    
     static IEnumerable<Line> CreateLines(List<FutureHexagonParameters> points)
     {
         for (int i = 0; i < points.Count; i++)
@@ -22,7 +22,7 @@ public static class RoadsDeveloper
             }
         }
     }
-    static List<Line> FilterLines(List<Line> lines)
+    static List<Line> FilterLinesByDelone(List<Line> lines)
     {
         lines.Sort();
         List<Line> result = new List<Line>();
@@ -87,5 +87,64 @@ public static class RoadsDeveloper
             line1.Point1 == line2.Point2 ||
             line1.Point2 == line2.Point1 ||
             line1.Point2 == line2.Point2;
+    }
+    static List<Line> FilterLinesByAngle(List<Line> lines, List<FutureHexagonParameters> points, float angle)
+    {
+        for (int i = 0; i < points.Count; i++)
+        {
+            for (int j = i + 1; j < points.Count; j++)
+            {
+                for (int k = j + 1; k < points.Count; k++)
+                {
+                    Line a = lines.FirstOrDefault(x => (x.Point1 == new Vector2(points[i].position.x, points[i].position.z) && 
+                                                        x.Point2 == new Vector2(points[j].position.x, points[j].position.z)) ||
+                                                       (x.Point2 == new Vector2(points[i].position.x, points[i].position.z) && 
+                                                        x.Point1 == new Vector2(points[j].position.x, points[j].position.z)));
+                    Line b = lines.FirstOrDefault(x => (x.Point1 == new Vector2(points[k].position.x, points[k].position.z) && 
+                                                        x.Point2 == new Vector2(points[j].position.x, points[j].position.z)) ||
+                                                       (x.Point2 == new Vector2(points[k].position.x, points[k].position.z) && 
+                                                        x.Point1 == new Vector2(points[j].position.x, points[j].position.z)));
+                    Line c = lines.FirstOrDefault(x => (x.Point1 == new Vector2(points[i].position.x, points[i].position.z) && 
+                                                        x.Point2 == new Vector2(points[k].position.x, points[k].position.z)) ||
+                                                       (x.Point2 == new Vector2(points[i].position.x, points[i].position.z) && 
+                                                        x.Point1 == new Vector2(points[k].position.x, points[k].position.z)));
+                    if (a == null || b == null || c == null)
+                        continue;
+                    Vector3 angles = CalculateAngles(a.Distance, b.Distance, c.Distance);
+                    if (angles.x < angle || angles.y < angle || angles.z < angle)
+                    {
+                        if (a.Distance > b.Distance)
+                            if (a.Distance > c.Distance)
+                                lines.Remove(a);
+                            else
+                                lines.Remove(c);
+                        else
+                            if (b.Distance > c.Distance)
+                                lines.Remove(b);
+                            else
+                                lines.Remove(c);
+                    }
+                        
+                }
+            }
+        }
+        
+        return lines;
+    }
+    public static Vector3 CalculateAngles(float a, float b, float c)
+    {
+        float cosA = (Mathf.Pow(b, 2) + Mathf.Pow(c, 2) - Mathf.Pow(a, 2)) / (2 * b * c);
+        float cosB = (Mathf.Pow(a, 2) + Mathf.Pow(c, 2) - Mathf.Pow(b, 2)) / (2 * a * c);
+        float cosC = (Mathf.Pow(a, 2) + Mathf.Pow(b, 2) - Mathf.Pow(c, 2)) / (2 * a * b);
+
+        cosA = Mathf.Clamp(cosA, -1f, 1f);
+        cosB = Mathf.Clamp(cosB, -1f, 1f);
+        cosC = Mathf.Clamp(cosC, -1f, 1f);
+
+        float angleA = Mathf.Acos(cosA) * Mathf.Rad2Deg; 
+        float angleB = Mathf.Acos(cosB) * Mathf.Rad2Deg;
+        float angleC = Mathf.Acos(cosC) * Mathf.Rad2Deg;
+
+        return new Vector3(angleA, angleB, angleC);
     }
 }
