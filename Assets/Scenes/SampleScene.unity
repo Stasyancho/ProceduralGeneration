@@ -433,17 +433,18 @@ MonoBehaviour:
   useSeed: 1
   seed: -1954402974
   gridParent: {fileID: 231941279}
-  gridWidth: 20
-  gridHeight: 20
+  gridWidth: 51
+  gridHeight: 51
   hexSize: 2
+  borderPrefab: {fileID: 4756679399584560196, guid: 856e7410a88cb264e99589420d2c7a74, type: 3}
   prefabs:
-  - {fileID: 4756679399584560196, guid: 856e7410a88cb264e99589420d2c7a74, type: 3}
   - {fileID: 4756679399584560196, guid: 5685717a159978a4ca51a73eda63e3c7, type: 3}
   - {fileID: 4756679399584560196, guid: 0c4bc30402d68e54c98d3211ebea4c01, type: 3}
   - {fileID: 4756679399584560196, guid: 09f513ef77bf56d4ba33949052746988, type: 3}
   pathsParent: {fileID: 509738643}
   castlesCount: 5
   castlePrefab: {fileID: 4756679399584560196, guid: 4771b0f6d40af8044ae4e0a9beb9d4af, type: 3}
+  minimalAngleForTriangle: 15
   hexList: []
 --- !u!1 &705507993
 GameObject:

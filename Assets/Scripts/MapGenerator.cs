@@ -16,6 +16,7 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private int gridWidth = 10;
     [SerializeField] private int gridHeight = 10;
     [SerializeField] private float hexSize = 2f;
+    [SerializeField] private GameObject borderPrefab;
     [SerializeField] private List<GameObject> prefabs;
     
     [Header("CastleSettings")]
@@ -51,8 +52,8 @@ public class MapGenerator : MonoBehaviour
         for (int x = pathsParent.childCount - 1; x >= 0; x--)
             Destroy(pathsParent.transform.GetChild(x).gameObject);
         List<FutureHexagonParameters> map = MapDeveloper.Develop(gridWidth, gridHeight, hexSize, prefabs.Count, castlesCount);
-        hexList = HexGridSystem.GenerateGrid(map, gridParent, prefabs, castlePrefab);
-        List<Line> lines = RoadsDeveloper.Develop(map.Where(x => x.isCastle).ToList(), minimalAngleForTriangle);
+        hexList = HexGridSystem.GenerateGrid(map, gridParent, prefabs, borderPrefab, castlePrefab);
+        List<Line> lines = RoadsDeveloper.Develop(map.Where(x => x.IsCastle).ToList(), minimalAngleForTriangle);
         RoadsDrawer.DrawRoads(pathsParent, lines);
     }
 }

@@ -1,25 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using UnityEngine;
 
 public static class HexGridSystem
 {
 
-    public static List<Hexagon> GenerateGrid(IEnumerable<FutureHexagonParameters> map, Transform parent, List<GameObject> prefabs, GameObject castlePrefab)
+    public static List<Hexagon> GenerateGrid(List<FutureHexagonParameters> map, Transform parent, List<GameObject> prefabs, GameObject borderPrefab, GameObject castlePrefab)
     {
         List<Hexagon> hexObjects = new List<Hexagon>();
-
-        foreach (var hexagonParameters in map)
+        
+        foreach (var hexagon in map)
         {
-            GameObject newHex;
-            if (hexagonParameters.isCastle)
-                newHex = Object.Instantiate(castlePrefab, hexagonParameters.position, Quaternion.identity, parent);
-            else
-                newHex = Object.Instantiate(prefabs[hexagonParameters.zoneId], hexagonParameters.position, Quaternion.identity, parent);
-            Hexagon hex = newHex.GetComponent<Hexagon>();
-            hex.gridPosition = hexagonParameters.gridPosition;
-            hexObjects.Add(hex);
+            GameObject prefab = null;
+            if (hexagon.IsCastle)
+                prefab = castlePrefab;
+            if (hexagon.IsWater)
+                prefab = borderPrefab;
+            if (prefab == null)
+                prefab = prefabs[hexagon.ZoneId];
+            GameObject newObject = Object.Instantiate(prefab, hexagon.Position, Quaternion.identity, parent);
+            var newHexagon = newObject.GetComponent<Hexagon>();
+            newHexagon.gridPosition = hexagon.GridPosition;
+            
+            hexObjects.Add(newHexagon);
         }
 
         foreach (var hexagon in hexObjects)

@@ -8,10 +8,19 @@ public class Hexagon : MonoBehaviour
     public HexagonType Type;
     public float StepCost;
     public bool Explored = false;
+
+    public virtual void HexagonEventStart()
+    {
+        Debug.Log("NotOverride");
+    }
 }
 
 public enum HexagonType
 {
     None,
-    Impassable
+    Event,
+    Impassable,
+    Enemy,
+    Castle
 }
+

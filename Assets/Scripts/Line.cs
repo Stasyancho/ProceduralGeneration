@@ -18,6 +18,16 @@ public class Line : IComparable<Line>
         }
     }
 
+    public bool Contains(Vector2 point)
+    {
+        return Point1 == point || Point2 == point;
+    }
+
+    public bool Contains(Vector3 point)
+    {
+        return Contains(new Vector2(point.x, point.z));
+    }
+
     public int CompareTo(Line other)
     {
         return this.Distance.CompareTo(other.Distance);

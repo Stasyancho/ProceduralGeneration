@@ -18,7 +18,7 @@ public static class RoadsDeveloper
         {
             for (int j = i + 1; j < points.Count; j++)
             {
-                yield return new Line(new Vector2(points[i].position.x, points[i].position.z), new Vector2(points[j].position.x, points[j].position.z));
+                yield return new Line(new Vector2(points[i].Position.x, points[i].Position.z), new Vector2(points[j].Position.x, points[j].Position.z));
             }
         }
     }
@@ -40,7 +40,7 @@ public static class RoadsDeveloper
     }
     static bool IsLineIntersect(Line line1, Line line2)
     {
-        if (IsLineConnect(line1, line2))
+        if (line1.Contains(line2.Point1) || line1.Contains(line2.Point2))
             return false;
 
         Vector2 p1 = line1.Point1;
@@ -79,15 +79,6 @@ public static class RoadsDeveloper
     {
         return Mathf.Min(a.x, b.x) <= p.x && p.x <= MathF.Max(a.x, b.x) && MathF.Min(a.y, b.y) <= p.y && p.y <= MathF.Max(a.y, b.y);
     }
-
-    static bool IsLineConnect(Line line1, Line line2)
-    {
-        return
-            line1.Point1 == line2.Point1 ||
-            line1.Point1 == line2.Point2 ||
-            line1.Point2 == line2.Point1 ||
-            line1.Point2 == line2.Point2;
-    }
     static List<Line> FilterLinesByAngle(List<Line> lines, List<FutureHexagonParameters> points, float angle)
     {
         for (int i = 0; i < points.Count; i++)
@@ -96,18 +87,9 @@ public static class RoadsDeveloper
             {
                 for (int k = j + 1; k < points.Count; k++)
                 {
-                    Line a = lines.FirstOrDefault(x => (x.Point1 == new Vector2(points[i].position.x, points[i].position.z) && 
-                                                        x.Point2 == new Vector2(points[j].position.x, points[j].position.z)) ||
-                                                       (x.Point2 == new Vector2(points[i].position.x, points[i].position.z) && 
-                                                        x.Point1 == new Vector2(points[j].position.x, points[j].position.z)));
-                    Line b = lines.FirstOrDefault(x => (x.Point1 == new Vector2(points[k].position.x, points[k].position.z) && 
-                                                        x.Point2 == new Vector2(points[j].position.x, points[j].position.z)) ||
-                                                       (x.Point2 == new Vector2(points[k].position.x, points[k].position.z) && 
-                                                        x.Point1 == new Vector2(points[j].position.x, points[j].position.z)));
-                    Line c = lines.FirstOrDefault(x => (x.Point1 == new Vector2(points[i].position.x, points[i].position.z) && 
-                                                        x.Point2 == new Vector2(points[k].position.x, points[k].position.z)) ||
-                                                       (x.Point2 == new Vector2(points[i].position.x, points[i].position.z) && 
-                                                        x.Point1 == new Vector2(points[k].position.x, points[k].position.z)));
+                    Line a = lines.FirstOrDefault(x => x.Contains(points[i].Position) && x.Contains(points[j].Position));
+                    Line b = lines.FirstOrDefault(x => x.Contains(points[i].Position) && x.Contains(points[k].Position));
+                    Line c = lines.FirstOrDefault(x => x.Contains(points[k].Position) && x.Contains(points[j].Position));
                     if (a == null || b == null || c == null)
                         continue;
                     Vector3 angles = CalculateAngles(a.Distance, b.Distance, c.Distance);
